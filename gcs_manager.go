@@ -14,6 +14,7 @@ import (
 type (
 	GCSManagerInterface interface {
 		UploadFile(bucketName, objectName, filePath string) error
+		DeleteFile(bucketName, objectName string) error
 	}
 
 	GCSManager struct {
@@ -43,6 +44,16 @@ func (g *GCSManager) UploadFile(bucketName, objectName string, file os.File) err
 
 	if _, err := io.Copy(writer, &file); err != nil {
 		return fmt.Errorf("failed to upload file to GCS: %v", err)
+	}
+
+	return nil
+}
+
+func (g *GCSManager) DeleteFile(bucketName, objectName string) error {
+	bucket := g.client.Bucket(bucketName)
+	object := bucket.Object(objectName)
+	if err := object.Delete(g.ctx); err != nil {
+		return fmt.Errorf("failed to delete object: %v", err)
 	}
 
 	return nil
