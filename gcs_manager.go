@@ -15,6 +15,7 @@ type (
 	GCSManagerInterface interface {
 		UploadFile(bucketName, objectName, filePath string) error
 		DeleteFile(bucketName, objectName string) error
+		ListFiles(bucketName string) ([]string, error)
 	}
 
 	GCSManager struct {
@@ -57,4 +58,20 @@ func (g *GCSManager) DeleteFile(bucketName, objectName string) error {
 	}
 
 	return nil
+}
+
+func (g *GCSManager) ListFiles(bucketName string) ([]string, error) {
+	var files []string
+	it := g.client.Bucket(bucketName).Objects(g.ctx, nil)
+	for {
+		attrs, err := it.Next()
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			return nil, fmt.Errorf("failed to list objects: %v", err)
+		}
+		files = append(files, attrs.Name)
+	}
+	return files, nil
 }
