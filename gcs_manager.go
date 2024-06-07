@@ -16,6 +16,7 @@ type (
 		UploadFile(bucketName, objectName, filePath string) error
 		DeleteFile(bucketName, objectName string) error
 		ListFiles(bucketName string) ([]string, error)
+		MoveFile(bucketName, srcObjectName, dstObjectName string) error
 	}
 
 	GCSManager struct {
@@ -74,4 +75,20 @@ func (g *GCSManager) ListFiles(bucketName string) ([]string, error) {
 		files = append(files, attrs.Name)
 	}
 	return files, nil
+}
+
+func (g *GCSManager) MoveFile(bucketName, srcObjectName, dstObjectName string) error {
+	src := g.client.Bucket(bucketName).Object(srcObjectName)
+	dst := g.client.Bucket(bucketName).Object(dstObjectName)
+
+	_, err := dst.CopierFrom(src).Run(g.ctx)
+	if err != nil {
+		return err
+	}
+
+	if err := src.Delete(g.ctx); err != nil {
+		return err
+	}
+
+	return nil
 }
