@@ -17,6 +17,7 @@ type (
 		DeleteFile(bucketName, objectName string) error
 		ListFiles(bucketName string) ([]string, error)
 		MoveFile(bucketName, srcObjectName, dstObjectName string) error
+		DeleteAllFilesInDirectory(bucketName, directory string) error
 	}
 
 	GCSManager struct {
@@ -88,6 +89,29 @@ func (g *GCSManager) MoveFile(bucketName, srcObjectName, dstObjectName string) e
 
 	if err := src.Delete(g.ctx); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (g *GCSManager) DeleteAllFilesInDirectory(bucketName, directory string) error {
+	bucket := g.client.Bucket(bucketName)
+	query := &storage.Query{Prefix: directory}
+	it := bucket.Objects(g.ctx, query)
+
+	for {
+		attrs, err := it.Next()
+		if err == storage.ErrObjectNotExist {
+			break
+		}
+		if err != nil {
+			return err
+		}
+
+		obj := bucket.Object(attrs.Name)
+		if err := obj.Delete(g.ctx); err != nil {
+			return err
+		}
 	}
 
 	return nil

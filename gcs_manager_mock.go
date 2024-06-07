@@ -33,6 +33,20 @@ func (m *MockGCSManagerInterface) EXPECT() *MockGCSManagerInterfaceMockRecorder 
 	return m.recorder
 }
 
+// DeleteAllFilesInDirectory mocks base method.
+func (m *MockGCSManagerInterface) DeleteAllFilesInDirectory(bucketName, directory string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteAllFilesInDirectory", bucketName, directory)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteAllFilesInDirectory indicates an expected call of DeleteAllFilesInDirectory.
+func (mr *MockGCSManagerInterfaceMockRecorder) DeleteAllFilesInDirectory(bucketName, directory interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteAllFilesInDirectory", reflect.TypeOf((*MockGCSManagerInterface)(nil).DeleteAllFilesInDirectory), bucketName, directory)
+}
+
 // DeleteFile mocks base method.
 func (m *MockGCSManagerInterface) DeleteFile(bucketName, objectName string) error {
 	m.ctrl.T.Helper()
