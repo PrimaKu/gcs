@@ -11,7 +11,7 @@ go get github.com/PrimaKu/gcs
 ## Setup
 
 ```go
-gcsManager, err := gcs.NewGCSManager(gcsConfig.CredentialPath)
+gcsManager, err := gcs.NewGCSManager(credentialPath) // string
 if err != nil {
   log.Fatalf("Failed to create GCS client: %v", err)
 }
