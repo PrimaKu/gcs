@@ -12,34 +12,34 @@ import (
 )
 
 type (
-	GCSManagerInterface interface {
-		UploadFile(bucketName, objectName, filePath string) error
+	GCSManager interface {
+		UploadFile(bucketName, objectName string, file os.File) error
 		DeleteFile(bucketName, objectName string) error
 		ListFiles(bucketName string) ([]string, error)
 		MoveFile(bucketName, srcObjectName, dstObjectName string) error
 		DeleteAllFilesInDirectory(bucketName, directory string) error
 	}
 
-	GCSManager struct {
+	gcsManager struct {
 		client *storage.Client
 		ctx    context.Context
 	}
 )
 
-func NewGCSManager(credentialsFile string) (*GCSManager, error) {
+func NewGCSManager(credentialsFile string) (GCSManager, error) {
 	ctx := context.Background()
 	client, err := storage.NewClient(ctx, option.WithCredentialsFile(credentialsFile))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create GCS client: %v", err)
 	}
 
-	return &GCSManager{
+	return &gcsManager{
 		client: client,
 		ctx:    ctx,
 	}, nil
 }
 
-func (g *GCSManager) UploadFile(bucketName, objectName string, file os.File) error {
+func (g gcsManager) UploadFile(bucketName, objectName string, file os.File) error {
 	bucket := g.client.Bucket(bucketName)
 	object := bucket.Object(objectName)
 	writer := object.NewWriter(g.ctx)
@@ -52,7 +52,7 @@ func (g *GCSManager) UploadFile(bucketName, objectName string, file os.File) err
 	return nil
 }
 
-func (g *GCSManager) DeleteFile(bucketName, objectName string) error {
+func (g gcsManager) DeleteFile(bucketName, objectName string) error {
 	bucket := g.client.Bucket(bucketName)
 	object := bucket.Object(objectName)
 	if err := object.Delete(g.ctx); err != nil {
@@ -62,7 +62,7 @@ func (g *GCSManager) DeleteFile(bucketName, objectName string) error {
 	return nil
 }
 
-func (g *GCSManager) ListFiles(bucketName string) ([]string, error) {
+func (g gcsManager) ListFiles(bucketName string) ([]string, error) {
 	var files []string
 	it := g.client.Bucket(bucketName).Objects(g.ctx, nil)
 	for {
@@ -78,7 +78,7 @@ func (g *GCSManager) ListFiles(bucketName string) ([]string, error) {
 	return files, nil
 }
 
-func (g *GCSManager) MoveFile(bucketName, srcObjectName, dstObjectName string) error {
+func (g gcsManager) MoveFile(bucketName, srcObjectName, dstObjectName string) error {
 	src := g.client.Bucket(bucketName).Object(srcObjectName)
 	dst := g.client.Bucket(bucketName).Object(dstObjectName)
 
@@ -94,7 +94,7 @@ func (g *GCSManager) MoveFile(bucketName, srcObjectName, dstObjectName string) e
 	return nil
 }
 
-func (g *GCSManager) DeleteAllFilesInDirectory(bucketName, directory string) error {
+func (g gcsManager) DeleteAllFilesInDirectory(bucketName, directory string) error {
 	bucket := g.client.Bucket(bucketName)
 	query := &storage.Query{Prefix: directory}
 	it := bucket.Objects(g.ctx, query)
