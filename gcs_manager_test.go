@@ -1,6 +1,8 @@
 package gcs
 
 import (
+	"io"
+	"os"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -11,10 +13,16 @@ func TestUploadFile(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockGCS := NewMockGCSManagerInterface(ctrl)
-	mockGCS.EXPECT().UploadFile("bucketName", "objectName", "filePath").Return(nil)
+	mockGCS := NewMockGCSManager(ctrl)
+	fileContent := []byte("test content")
+	file := os.NewFile(0, "test-file")
+	defer file.Close()
+	file.Write(fileContent)
+	file.Seek(0, io.SeekStart)
 
-	err := mockGCS.UploadFile("bucketName", "objectName", "filePath")
+	mockGCS.EXPECT().UploadFile("bucketName", "objectName", *file).Return(nil)
+
+	err := mockGCS.UploadFile("bucketName", "objectName", *file)
 	assert.NoError(t, err)
 }
 
@@ -22,7 +30,7 @@ func TestDeleteFile(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockGCS := NewMockGCSManagerInterface(ctrl)
+	mockGCS := NewMockGCSManager(ctrl)
 	mockGCS.EXPECT().DeleteFile("bucketName", "objectName").Return(nil)
 
 	err := mockGCS.DeleteFile("bucketName", "objectName")
@@ -33,7 +41,7 @@ func TestListFiles(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockGCS := NewMockGCSManagerInterface(ctrl)
+	mockGCS := NewMockGCSManager(ctrl)
 	expectedFiles := []string{"file1", "file2"}
 	mockGCS.EXPECT().ListFiles("bucketName").Return(expectedFiles, nil)
 
@@ -46,7 +54,7 @@ func TestMoveFile(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockGCS := NewMockGCSManagerInterface(ctrl)
+	mockGCS := NewMockGCSManager(ctrl)
 	mockGCS.EXPECT().MoveFile("bucketName", "srcObjectName", "dstObjectName").Return(nil)
 
 	err := mockGCS.MoveFile("bucketName", "srcObjectName", "dstObjectName")
@@ -57,7 +65,7 @@ func TestDeleteAllFilesInDirectory(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockGCS := NewMockGCSManagerInterface(ctrl)
+	mockGCS := NewMockGCSManager(ctrl)
 	mockGCS.EXPECT().DeleteAllFilesInDirectory("bucketName", "directory/").Return(nil)
 
 	err := mockGCS.DeleteAllFilesInDirectory("bucketName", "directory/")

@@ -5,36 +5,37 @@
 package gcs
 
 import (
+	os "os"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
 )
 
-// MockGCSManagerInterface is a mock of GCSManagerInterface interface.
-type MockGCSManagerInterface struct {
+// MockGCSManager is a mock of GCSManager interface.
+type MockGCSManager struct {
 	ctrl     *gomock.Controller
-	recorder *MockGCSManagerInterfaceMockRecorder
+	recorder *MockGCSManagerMockRecorder
 }
 
-// MockGCSManagerInterfaceMockRecorder is the mock recorder for MockGCSManagerInterface.
-type MockGCSManagerInterfaceMockRecorder struct {
-	mock *MockGCSManagerInterface
+// MockGCSManagerMockRecorder is the mock recorder for MockGCSManager.
+type MockGCSManagerMockRecorder struct {
+	mock *MockGCSManager
 }
 
-// NewMockGCSManagerInterface creates a new mock instance.
-func NewMockGCSManagerInterface(ctrl *gomock.Controller) *MockGCSManagerInterface {
-	mock := &MockGCSManagerInterface{ctrl: ctrl}
-	mock.recorder = &MockGCSManagerInterfaceMockRecorder{mock}
+// NewMockGCSManager creates a new mock instance.
+func NewMockGCSManager(ctrl *gomock.Controller) *MockGCSManager {
+	mock := &MockGCSManager{ctrl: ctrl}
+	mock.recorder = &MockGCSManagerMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockGCSManagerInterface) EXPECT() *MockGCSManagerInterfaceMockRecorder {
+func (m *MockGCSManager) EXPECT() *MockGCSManagerMockRecorder {
 	return m.recorder
 }
 
 // DeleteAllFilesInDirectory mocks base method.
-func (m *MockGCSManagerInterface) DeleteAllFilesInDirectory(bucketName, directory string) error {
+func (m *MockGCSManager) DeleteAllFilesInDirectory(bucketName, directory string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DeleteAllFilesInDirectory", bucketName, directory)
 	ret0, _ := ret[0].(error)
@@ -42,13 +43,13 @@ func (m *MockGCSManagerInterface) DeleteAllFilesInDirectory(bucketName, director
 }
 
 // DeleteAllFilesInDirectory indicates an expected call of DeleteAllFilesInDirectory.
-func (mr *MockGCSManagerInterfaceMockRecorder) DeleteAllFilesInDirectory(bucketName, directory interface{}) *gomock.Call {
+func (mr *MockGCSManagerMockRecorder) DeleteAllFilesInDirectory(bucketName, directory interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteAllFilesInDirectory", reflect.TypeOf((*MockGCSManagerInterface)(nil).DeleteAllFilesInDirectory), bucketName, directory)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteAllFilesInDirectory", reflect.TypeOf((*MockGCSManager)(nil).DeleteAllFilesInDirectory), bucketName, directory)
 }
 
 // DeleteFile mocks base method.
-func (m *MockGCSManagerInterface) DeleteFile(bucketName, objectName string) error {
+func (m *MockGCSManager) DeleteFile(bucketName, objectName string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DeleteFile", bucketName, objectName)
 	ret0, _ := ret[0].(error)
@@ -56,13 +57,13 @@ func (m *MockGCSManagerInterface) DeleteFile(bucketName, objectName string) erro
 }
 
 // DeleteFile indicates an expected call of DeleteFile.
-func (mr *MockGCSManagerInterfaceMockRecorder) DeleteFile(bucketName, objectName interface{}) *gomock.Call {
+func (mr *MockGCSManagerMockRecorder) DeleteFile(bucketName, objectName interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteFile", reflect.TypeOf((*MockGCSManagerInterface)(nil).DeleteFile), bucketName, objectName)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteFile", reflect.TypeOf((*MockGCSManager)(nil).DeleteFile), bucketName, objectName)
 }
 
 // ListFiles mocks base method.
-func (m *MockGCSManagerInterface) ListFiles(bucketName string) ([]string, error) {
+func (m *MockGCSManager) ListFiles(bucketName string) ([]string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ListFiles", bucketName)
 	ret0, _ := ret[0].([]string)
@@ -71,13 +72,13 @@ func (m *MockGCSManagerInterface) ListFiles(bucketName string) ([]string, error)
 }
 
 // ListFiles indicates an expected call of ListFiles.
-func (mr *MockGCSManagerInterfaceMockRecorder) ListFiles(bucketName interface{}) *gomock.Call {
+func (mr *MockGCSManagerMockRecorder) ListFiles(bucketName interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListFiles", reflect.TypeOf((*MockGCSManagerInterface)(nil).ListFiles), bucketName)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListFiles", reflect.TypeOf((*MockGCSManager)(nil).ListFiles), bucketName)
 }
 
 // MoveFile mocks base method.
-func (m *MockGCSManagerInterface) MoveFile(bucketName, srcObjectName, dstObjectName string) error {
+func (m *MockGCSManager) MoveFile(bucketName, srcObjectName, dstObjectName string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "MoveFile", bucketName, srcObjectName, dstObjectName)
 	ret0, _ := ret[0].(error)
@@ -85,21 +86,21 @@ func (m *MockGCSManagerInterface) MoveFile(bucketName, srcObjectName, dstObjectN
 }
 
 // MoveFile indicates an expected call of MoveFile.
-func (mr *MockGCSManagerInterfaceMockRecorder) MoveFile(bucketName, srcObjectName, dstObjectName interface{}) *gomock.Call {
+func (mr *MockGCSManagerMockRecorder) MoveFile(bucketName, srcObjectName, dstObjectName interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MoveFile", reflect.TypeOf((*MockGCSManagerInterface)(nil).MoveFile), bucketName, srcObjectName, dstObjectName)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MoveFile", reflect.TypeOf((*MockGCSManager)(nil).MoveFile), bucketName, srcObjectName, dstObjectName)
 }
 
 // UploadFile mocks base method.
-func (m *MockGCSManagerInterface) UploadFile(bucketName, objectName, filePath string) error {
+func (m *MockGCSManager) UploadFile(bucketName, objectName string, file os.File) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UploadFile", bucketName, objectName, filePath)
+	ret := m.ctrl.Call(m, "UploadFile", bucketName, objectName, file)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // UploadFile indicates an expected call of UploadFile.
-func (mr *MockGCSManagerInterfaceMockRecorder) UploadFile(bucketName, objectName, filePath interface{}) *gomock.Call {
+func (mr *MockGCSManagerMockRecorder) UploadFile(bucketName, objectName, file interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UploadFile", reflect.TypeOf((*MockGCSManagerInterface)(nil).UploadFile), bucketName, objectName, filePath)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UploadFile", reflect.TypeOf((*MockGCSManager)(nil).UploadFile), bucketName, objectName, file)
 }
