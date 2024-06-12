@@ -67,10 +67,11 @@ func (g gcsManager) ListFiles(bucketName string) ([]string, error) {
 	it := g.client.Bucket(bucketName).Objects(g.ctx, nil)
 	for {
 		attrs, err := it.Next()
-		if err == iterator.Done {
-			break
-		}
 		if err != nil {
+			if err == iterator.Done {
+				break
+			}
+
 			return nil, fmt.Errorf("failed to list objects: %v", err)
 		}
 		files = append(files, attrs.Name)
