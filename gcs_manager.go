@@ -101,10 +101,11 @@ func (g gcsManager) DeleteAllFilesInDirectory(bucketName, directory string) erro
 
 	for {
 		attrs, err := it.Next()
-		if err == storage.ErrObjectNotExist {
-			break
-		}
 		if err != nil {
+			if err == storage.ErrObjectNotExist {
+				break
+			}
+
 			return err
 		}
 
