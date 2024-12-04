@@ -62,6 +62,20 @@ func (mr *MockGCSManagerMockRecorder) DeleteFile(bucketName, objectName interfac
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteFile", reflect.TypeOf((*MockGCSManager)(nil).DeleteFile), bucketName, objectName)
 }
 
+// DownloadFile mocks base method.
+func (m *MockGCSManager) DownloadFile(bucketName, objectName, destPath string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DownloadFile", bucketName, objectName, destPath)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DownloadFile indicates an expected call of DownloadFile.
+func (mr *MockGCSManagerMockRecorder) DownloadFile(bucketName, objectName, destPath interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DownloadFile", reflect.TypeOf((*MockGCSManager)(nil).DownloadFile), bucketName, objectName, destPath)
+}
+
 // ListFiles mocks base method.
 func (m *MockGCSManager) ListFiles(bucketName string) ([]string, error) {
 	m.ctrl.T.Helper()

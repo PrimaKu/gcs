@@ -71,3 +71,14 @@ func TestDeleteAllFilesInDirectory(t *testing.T) {
 	err := mockGCS.DeleteAllFilesInDirectory("bucketName", "directory/")
 	assert.NoError(t, err)
 }
+
+func TestDownloadFile(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockGCS := NewMockGCSManager(ctrl)
+	mockGCS.EXPECT().DownloadFile("bucketName", "directory/file.ext", "/tmp/").Return(nil)
+
+	err := mockGCS.DownloadFile("bucketName", "directory/file.ext", "/tmp/")
+	assert.NoError(t, err)
+}

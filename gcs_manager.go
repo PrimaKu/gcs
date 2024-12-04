@@ -18,6 +18,7 @@ type (
 		ListFiles(bucketName string) ([]string, error)
 		MoveFile(bucketName, srcObjectName, dstObjectName string) error
 		DeleteAllFilesInDirectory(bucketName, directory string) error
+		DownloadFile(bucketName, objectName, destPath string) error
 	}
 
 	gcsManager struct {
@@ -117,4 +118,23 @@ func (g gcsManager) DeleteAllFilesInDirectory(bucketName, directory string) erro
 	}
 
 	return nil
+}
+
+func (g gcsManager) DownloadFile(bucketName, objectName, destPath string) error {
+	bucket := g.client.Bucket(bucketName)
+	obj := bucket.Object(objectName)
+	r, err := obj.NewReader(g.ctx)
+	if err != nil {
+		return err
+	}
+	defer r.Close()
+
+	out, err := os.Create(destPath)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+
+	_, err = io.Copy(out, r)
+	return err
 }
