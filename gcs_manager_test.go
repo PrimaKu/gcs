@@ -43,9 +43,9 @@ func TestListFiles(t *testing.T) {
 
 	mockGCS := NewMockGCSManager(ctrl)
 	expectedFiles := []string{"file1", "file2"}
-	mockGCS.EXPECT().ListFiles("bucketName").Return(expectedFiles, nil)
+	mockGCS.EXPECT().ListFiles("bucketName", "/").Return(expectedFiles, nil)
 
-	files, err := mockGCS.ListFiles("bucketName")
+	files, err := mockGCS.ListFiles("bucketName", "/")
 	assert.NoError(t, err)
 	assert.Equal(t, expectedFiles, files)
 }

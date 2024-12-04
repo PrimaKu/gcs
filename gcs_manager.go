@@ -15,7 +15,7 @@ type (
 	GCSManager interface {
 		UploadFile(bucketName, objectName string, file os.File) error
 		DeleteFile(bucketName, objectName string) error
-		ListFiles(bucketName string) ([]string, error)
+		ListFiles(bucketName, directory string) ([]string, error)
 		MoveFile(bucketName, srcObjectName, dstObjectName string) error
 		DeleteAllFilesInDirectory(bucketName, directory string) error
 		DownloadFile(bucketName, objectName, destPath string) error
@@ -63,9 +63,15 @@ func (g gcsManager) DeleteFile(bucketName, objectName string) error {
 	return nil
 }
 
-func (g gcsManager) ListFiles(bucketName string) ([]string, error) {
+func (g gcsManager) ListFiles(bucketName, directory string) ([]string, error) {
+	if directory != "" && directory[len(directory)-1] != '/' {
+		directory += "/"
+	}
+
 	var files []string
-	it := g.client.Bucket(bucketName).Objects(g.ctx, nil)
+	it := g.client.Bucket(bucketName).Objects(g.ctx, &storage.Query{
+		Prefix: directory,
+	})
 	for {
 		attrs, err := it.Next()
 		if err != nil {

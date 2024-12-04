@@ -77,18 +77,18 @@ func (mr *MockGCSManagerMockRecorder) DownloadFile(bucketName, objectName, destP
 }
 
 // ListFiles mocks base method.
-func (m *MockGCSManager) ListFiles(bucketName string) ([]string, error) {
+func (m *MockGCSManager) ListFiles(bucketName, directory string) ([]string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ListFiles", bucketName)
+	ret := m.ctrl.Call(m, "ListFiles", bucketName, directory)
 	ret0, _ := ret[0].([]string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ListFiles indicates an expected call of ListFiles.
-func (mr *MockGCSManagerMockRecorder) ListFiles(bucketName interface{}) *gomock.Call {
+func (mr *MockGCSManagerMockRecorder) ListFiles(bucketName, directory interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListFiles", reflect.TypeOf((*MockGCSManager)(nil).ListFiles), bucketName)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListFiles", reflect.TypeOf((*MockGCSManager)(nil).ListFiles), bucketName, directory)
 }
 
 // MoveFile mocks base method.
