@@ -158,8 +158,12 @@ func (g gcsManager) UploadDirectory(bucketName, localDir, gcsPrefix string) erro
 			return nil
 		}
 
-		gcsPath := strings.TrimPrefix(localPath, localDir)
-		gcsObject := gcsPrefix + gcsPath
+		localPath = strings.ReplaceAll(localPath, "\\", "/")
+		localDir = strings.ReplaceAll(localDir, "\\", "/")
+
+		relativePath := strings.TrimPrefix(localPath, strings.Replace(localDir, "./", "", 1))
+		relativePath = strings.TrimPrefix(relativePath, string(filepath.Separator))
+		gcsPath := filepath.Join(gcsPrefix, relativePath)
 
 		file, err := os.Open(localPath)
 		if err != nil {
@@ -167,7 +171,7 @@ func (g gcsManager) UploadDirectory(bucketName, localDir, gcsPrefix string) erro
 		}
 		defer file.Close()
 
-		writer := g.client.Bucket(bucketName).Object(gcsObject).NewWriter(g.ctx)
+		writer := g.client.Bucket(bucketName).Object(gcsPath).NewWriter(g.ctx)
 		if _, err := io.Copy(writer, file); err != nil {
 			return fmt.Errorf("io.Copy: %v", err)
 		}
@@ -176,7 +180,7 @@ func (g gcsManager) UploadDirectory(bucketName, localDir, gcsPrefix string) erro
 			return fmt.Errorf("writer.Close: %v", err)
 		}
 
-		fmt.Printf("Uploaded %s to gs://%s/%s\n", localPath, bucketName, gcsObject)
+		fmt.Printf("Uploaded %s to gs://%s/%s\n", localPath, bucketName, gcsPath)
 		return nil
 	})
 
