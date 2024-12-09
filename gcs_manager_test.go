@@ -82,3 +82,20 @@ func TestDownloadFile(t *testing.T) {
 	err := mockGCS.DownloadFile("bucketName", "directory/file.ext", "/tmp/")
 	assert.NoError(t, err)
 }
+
+func TestUploadDirectory(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockGCS := NewMockGCSManager(ctrl)
+	fileContent := []byte("test content")
+	file := os.NewFile(0, "test-file")
+	defer file.Close()
+	file.Write(fileContent)
+	file.Seek(0, io.SeekStart)
+
+	mockGCS.EXPECT().UploadDirectory("bucketName", "localDir", "prefix").Return(nil)
+
+	err := mockGCS.UploadDirectory("bucketName", "localDir", "prefix")
+	assert.NoError(t, err)
+}

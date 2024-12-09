@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
+	"strings"
 
 	"cloud.google.com/go/storage"
 	"google.golang.org/api/iterator"
@@ -19,6 +21,7 @@ type (
 		MoveFile(bucketName, srcObjectName, dstObjectName string) error
 		DeleteAllFilesInDirectory(bucketName, directory string) error
 		DownloadFile(bucketName, objectName, destPath string) error
+		UploadDirectory(bucketName, localDir, gcsPrefix string) error
 	}
 
 	gcsManager struct {
@@ -143,4 +146,43 @@ func (g gcsManager) DownloadFile(bucketName, objectName, destPath string) error 
 
 	_, err = io.Copy(out, r)
 	return err
+}
+
+func (g gcsManager) UploadDirectory(bucketName, localDir, gcsPrefix string) error {
+	err := filepath.Walk(localDir, func(localPath string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if info.IsDir() {
+			return nil
+		}
+
+		gcsPath := strings.TrimPrefix(localPath, localDir)
+		gcsObject := gcsPrefix + gcsPath
+
+		file, err := os.Open(localPath)
+		if err != nil {
+			return fmt.Errorf("os.Open %v: %v", localPath, err)
+		}
+		defer file.Close()
+
+		writer := g.client.Bucket(bucketName).Object(gcsObject).NewWriter(g.ctx)
+		if _, err := io.Copy(writer, file); err != nil {
+			return fmt.Errorf("io.Copy: %v", err)
+		}
+
+		if err := writer.Close(); err != nil {
+			return fmt.Errorf("writer.Close: %v", err)
+		}
+
+		fmt.Printf("Uploaded %s to gs://%s/%s\n", localPath, bucketName, gcsObject)
+		return nil
+	})
+
+	if err != nil {
+		return fmt.Errorf("filepath.Walk: %v", err)
+	}
+
+	return nil
 }

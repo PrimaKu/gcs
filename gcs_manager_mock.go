@@ -105,6 +105,20 @@ func (mr *MockGCSManagerMockRecorder) MoveFile(bucketName, srcObjectName, dstObj
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MoveFile", reflect.TypeOf((*MockGCSManager)(nil).MoveFile), bucketName, srcObjectName, dstObjectName)
 }
 
+// UploadDirectory mocks base method.
+func (m *MockGCSManager) UploadDirectory(bucketName, localDir, gcsPrefix string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UploadDirectory", bucketName, localDir, gcsPrefix)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UploadDirectory indicates an expected call of UploadDirectory.
+func (mr *MockGCSManagerMockRecorder) UploadDirectory(bucketName, localDir, gcsPrefix interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UploadDirectory", reflect.TypeOf((*MockGCSManager)(nil).UploadDirectory), bucketName, localDir, gcsPrefix)
+}
+
 // UploadFile mocks base method.
 func (m *MockGCSManager) UploadFile(bucketName, objectName string, file os.File) error {
 	m.ctrl.T.Helper()
