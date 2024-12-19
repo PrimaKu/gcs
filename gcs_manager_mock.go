@@ -8,6 +8,7 @@ import (
 	os "os"
 	reflect "reflect"
 
+	storage "cloud.google.com/go/storage"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -103,6 +104,21 @@ func (m *MockGCSManager) MoveFile(bucketName, srcObjectName, dstObjectName strin
 func (mr *MockGCSManagerMockRecorder) MoveFile(bucketName, srcObjectName, dstObjectName interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MoveFile", reflect.TypeOf((*MockGCSManager)(nil).MoveFile), bucketName, srcObjectName, dstObjectName)
+}
+
+// Read mocks base method.
+func (m *MockGCSManager) Read(bucketName, objectName string) (*storage.Reader, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Read", bucketName, objectName)
+	ret0, _ := ret[0].(*storage.Reader)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Read indicates an expected call of Read.
+func (mr *MockGCSManagerMockRecorder) Read(bucketName, objectName interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Read", reflect.TypeOf((*MockGCSManager)(nil).Read), bucketName, objectName)
 }
 
 // UploadDirectory mocks base method.

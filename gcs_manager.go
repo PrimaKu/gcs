@@ -22,6 +22,7 @@ type (
 		DeleteAllFilesInDirectory(bucketName, directory string) error
 		DownloadFile(bucketName, objectName, destPath string) error
 		UploadDirectory(bucketName, localDir, gcsPrefix string) error
+		Read(bucketName, objectName string) (*storage.Reader, error)
 	}
 
 	gcsManager struct {
@@ -189,4 +190,15 @@ func (g gcsManager) UploadDirectory(bucketName, localDir, gcsPrefix string) erro
 	}
 
 	return nil
+}
+
+func (g gcsManager) Read(bucketName, objectName string) (*storage.Reader, error) {
+	bucket := g.client.Bucket(bucketName)
+	object := bucket.Object(objectName)
+	reader, err := object.NewReader(g.ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return reader, nil
 }

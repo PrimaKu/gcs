@@ -5,6 +5,7 @@ import (
 	"os"
 	"testing"
 
+	"cloud.google.com/go/storage"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 )
@@ -98,4 +99,22 @@ func TestUploadDirectory(t *testing.T) {
 
 	err := mockGCS.UploadDirectory("bucketName", "localDir", "prefix")
 	assert.NoError(t, err)
+}
+
+func TestRead(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockGCS := NewMockGCSManager(ctrl)
+	fileContent := []byte("test content")
+	file := os.NewFile(0, "test-file")
+	defer file.Close()
+	file.Write(fileContent)
+	file.Seek(0, io.SeekStart)
+
+	mockGCS.EXPECT().Read("bucketName", "objectName").Return(&storage.Reader{}, nil)
+
+	reader, err := mockGCS.Read("bucketName", "objectName")
+	assert.NoError(t, err)
+	assert.Equal(t, &storage.Reader{}, reader)
 }
