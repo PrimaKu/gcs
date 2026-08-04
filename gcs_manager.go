@@ -1,16 +1,15 @@
 package gcs
 
 import (
+	"cloud.google.com/go/storage"
 	"context"
 	"fmt"
+	"google.golang.org/api/iterator"
+	"google.golang.org/api/option"
 	"io"
 	"os"
 	"path/filepath"
 	"strings"
-
-	"cloud.google.com/go/storage"
-	"google.golang.org/api/iterator"
-	"google.golang.org/api/option"
 )
 
 type (
@@ -23,6 +22,7 @@ type (
 		DownloadFile(bucketName, objectName, destPath string) error
 		UploadDirectory(bucketName, localDir, gcsPrefix string) error
 		Read(bucketName, objectName string) (*storage.Reader, error)
+		FileAttrs(bucketName, objectName string) (*storage.ObjectAttrs, error)
 	}
 
 	gcsManager struct {
@@ -88,6 +88,10 @@ func (g gcsManager) ListFiles(bucketName, directory string) ([]string, error) {
 		files = append(files, attrs.Name)
 	}
 	return files, nil
+}
+
+func (g gcsManager) FileAttrs(bucketName, objectName string) (*storage.ObjectAttrs, error) {
+	return g.client.Bucket(bucketName).Object(objectName).Attrs(g.ctx)
 }
 
 func (g gcsManager) MoveFile(bucketName, srcObjectName, dstObjectName string) error {
